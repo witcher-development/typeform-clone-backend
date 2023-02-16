@@ -19,7 +19,7 @@ import { AppService } from './app.service';
         type: 'postgres',
         host: configService.get('DB_HOST'),
         port: configService.get('DB_PORT'),
-        user: configService.get('DB_USER'),
+        username: configService.get('DB_USER'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
         entities: [],
