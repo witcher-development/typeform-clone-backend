@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 
 import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 
-import { config } from './orm-config';
+import { MikroOrmConfig } from './orm-config';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -15,7 +14,7 @@ import { AppService } from './app.service';
       isGlobal: true,
       envFilePath: '.dev.env',
     }),
-    MikroOrmModule.forRoot(config),
+    MikroOrmModule.forRoot(MikroOrmConfig),
   ],
   controllers: [AppController],
   providers: [AppService],

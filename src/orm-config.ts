@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 
 const configService = new ConfigService();
 
-export const config: MikroOrmModuleSyncOptions = {
+export const MikroOrmConfig: MikroOrmModuleSyncOptions = {
   dbName: configService.get('DB_NAME'),
   user: configService.get('DB_USER'),
   password: configService.get('DB_PASSWORD'),
