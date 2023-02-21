@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { wrap } from '@mikro-orm/core';
 import { EntityRepository } from '@mikro-orm/postgresql';
 import { InjectRepository } from '@mikro-orm/nestjs';
 
@@ -35,12 +36,15 @@ export class SurveysService {
     return this.questionRepository.findAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} survey`;
+  findOne(id: string) {
+    return this.surveyRepository.findOne({ id });
   }
 
-  update(id: number, updateSurveyDto: UpdateSurveyDto) {
-    return `This action updates a #${id} survey`;
+  async update(id: string, updateSurveyDto: UpdateSurveyDto) {
+    const survey = await this.findOne(id);
+    wrap(survey).assign(updateSurveyDto);
+    await this.surveyRepository.persistAndFlush(survey);
+    return survey;
   }
 
   remove(id: number) {
