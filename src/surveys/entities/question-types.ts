@@ -16,36 +16,40 @@ export abstract class QuestionContentAbstract {
 
 @Embeddable({ discriminatorValue: QuestionTypes.String })
 export class QuestionStringContent extends QuestionContentAbstract {
-  type = QuestionTypes.String;
+  constructor() {
+    super();
+    this.type = QuestionTypes.String;
+  }
 }
 
 @Embeddable({ discriminatorValue: QuestionTypes.Number })
 export class QuestionNumberContent extends QuestionContentAbstract {
-  type = QuestionTypes.Number;
+  constructor() {
+    super();
+    this.type = QuestionTypes.Number;
+  }
 }
 
-@Embeddable()
 export class MultiSelectOption {
-  constructor(name: string) {
+  public name: string;
+  public id?: string;
+
+  constructor(name: string, id?: string) {
     this.name = name;
+    this.id = id || uuid.v4();
   }
-
-  @Property()
-  id: string = uuid.v4();
-
-  @Property()
-  name: string;
 }
 @Embeddable({ discriminatorValue: QuestionTypes.MultiSelect })
 export class QuestionMultiSelectContent extends QuestionContentAbstract {
-  type = QuestionTypes.MultiSelect;
-
-  @Embedded()
+  @Property({ type: 'json' })
   options: MultiSelectOption[];
 
-  constructor(options: string[]) {
+  constructor(options: MultiSelectOption[]) {
     super();
-    this.options = options.map((o) => new MultiSelectOption(o));
+    this.type = QuestionTypes.MultiSelect;
+    this.options = options.map(
+      ({ id, name }) => new MultiSelectOption(name, id),
+    );
   }
 }
 

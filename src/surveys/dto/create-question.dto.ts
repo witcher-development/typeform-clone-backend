@@ -1,6 +1,7 @@
-import { IsNotEmpty, IsString, IsUUID, ValidateNested } from 'class-validator';
-import { QuestionContent } from '../entities/question-types';
-import { Type } from 'class-transformer';
+import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import {
+  QuestionContent,
+} from '../entities/question-types';
 
 export class CreateQuestionDto {
   @IsNotEmpty()
@@ -12,7 +13,5 @@ export class CreateQuestionDto {
   name: string;
 
   @IsNotEmpty()
-  @ValidateNested({ each: true })
-  @Type(() => QuestionContent)
   content: QuestionContent;
 }

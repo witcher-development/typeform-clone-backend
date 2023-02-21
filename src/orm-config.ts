@@ -9,7 +9,6 @@ import {
   QuestionStringContent,
   QuestionNumberContent,
   QuestionMultiSelectContent,
-  MultiSelectOption,
 } from './surveys/entities/question-types';
 
 const configService = new ConfigService();
@@ -21,7 +20,6 @@ const MikroOrmConfig: MikroOrmModuleSyncOptions = {
     QuestionStringContent,
     QuestionNumberContent,
     QuestionMultiSelectContent,
-    MultiSelectOption,
   ],
   dbName: configService.getOrThrow('DB_NAME'),
   user: configService.getOrThrow('DB_USER'),

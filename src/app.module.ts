@@ -32,7 +32,6 @@ import { SubmissionsModule } from './submissions/submissions.module';
           QuestionStringContent,
           QuestionNumberContent,
           QuestionMultiSelectContent,
-          MultiSelectOption,
         ],
         dbName: configService.getOrThrow('DB_NAME'),
         user: configService.getOrThrow('DB_USER'),
