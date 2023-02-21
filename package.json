@@ -84,7 +84,7 @@
   "mikro-orm": {
     "useTsNode": true,
     "configPaths": [
-      "./src/orm-config.ts"
+      "./src/orm-config-migrations.ts"
     ]
   }
 }

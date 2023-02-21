@@ -1,5 +1,5 @@
 import * as uuid from 'uuid';
-import { Embeddable, Embedded, Enum, Property } from '@mikro-orm/core';
+import { Embeddable, Enum, Property } from '@mikro-orm/core';
 
 export enum QuestionTypes {
   String = 'string',

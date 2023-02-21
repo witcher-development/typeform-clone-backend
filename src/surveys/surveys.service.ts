@@ -2,11 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { EntityRepository } from '@mikro-orm/postgresql';
 import { InjectRepository } from '@mikro-orm/nestjs';
 
-import { Survey } from './entities/survey.entity';
-import { Question } from './entities/question.entity';
-import { CreateSurveyDto } from './dto/create-survey.dto';
-import { UpdateSurveyDto } from './dto/update-survey.dto';
-import { CreateQuestionDto } from './dto/create-question.dto';
+import { Survey, Question } from './entities';
+import { CreateSurveyDto, UpdateSurveyDto, CreateQuestionDto } from './dto';
 
 @Injectable()
 export class SurveysService {

@@ -7,7 +7,7 @@ import {
   Collection,
 } from '@mikro-orm/core';
 
-import { CreateSurveyDto } from '../dto/create-survey.dto';
+import { CreateSurveyDto } from '../dto';
 import { Question } from './question.entity';
 
 @Entity()

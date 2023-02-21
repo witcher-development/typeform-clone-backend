@@ -5,12 +5,13 @@ import {
   PipeTransform,
 } from '@nestjs/common';
 import { isString } from 'lodash';
-import { CreateQuestionDto } from './dto/create-question.dto';
+
+import { CreateQuestionDto } from './dto';
 import {
   QuestionContent,
   QuestionMultiSelectContent,
   QuestionTypes,
-} from './entities/question-types';
+} from './entities';
 
 export const isMultiSelectContent = (
   value: any,
@@ -28,14 +29,11 @@ export const isMultiSelectContent = (
 };
 
 const isQuestionContent = (value): value is QuestionContent => {
-  if (
-    !value.content ||
-    !Object.values(QuestionTypes).includes(value.content.type)
-  ) {
+  if (!value || !Object.values(QuestionTypes).includes(value.type)) {
     return false;
   }
 
-  switch (value.content.type) {
+  switch (value.type) {
     case QuestionTypes.String: {
       return true;
     }
@@ -43,7 +41,7 @@ const isQuestionContent = (value): value is QuestionContent => {
       return true;
     }
     case QuestionTypes.MultiSelect: {
-      return isMultiSelectContent(value.content);
+      return isMultiSelectContent(value);
     }
     default: {
       return false;
@@ -58,7 +56,7 @@ export class QuestionContentValidationPipe implements PipeTransform<any> {
       return value;
     }
 
-    if (!isQuestionContent(value)) {
+    if (!isQuestionContent(value.content)) {
       throw new BadRequestException(
         'Request body is not a valid question content',
       );

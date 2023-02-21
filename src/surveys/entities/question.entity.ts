@@ -7,13 +7,13 @@ import {
   Embedded,
 } from '@mikro-orm/core';
 
+import { CreateQuestionDto } from '../dto';
 import { Survey } from './survey.entity';
 import {
   QuestionStringContent,
   QuestionNumberContent,
   QuestionMultiSelectContent,
 } from './question-types';
-import { CreateQuestionDto } from '../dto/create-question.dto';
 
 @Entity()
 export class Question {

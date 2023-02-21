@@ -3,24 +3,13 @@ import { MikroOrmModuleSyncOptions } from '@mikro-orm/nestjs';
 import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { ConfigService } from '@nestjs/config';
 
-import { Survey } from './surveys/entities/survey.entity';
-import { Question } from './surveys/entities/question.entity';
-import {
-  QuestionStringContent,
-  QuestionNumberContent,
-  QuestionMultiSelectContent,
-} from './surveys/entities/question-types';
+import { allEntities } from './entities';
 
-const configService = new ConfigService();
-
-const MikroOrmConfig: MikroOrmModuleSyncOptions = {
-  entities: [
-    Survey,
-    Question,
-    QuestionStringContent,
-    QuestionNumberContent,
-    QuestionMultiSelectContent,
-  ],
+// for the app
+export const getMikroOrmConfigForApp = (
+  configService: ConfigService,
+): MikroOrmModuleSyncOptions => ({
+  entities: allEntities,
   dbName: configService.getOrThrow('DB_NAME'),
   user: configService.getOrThrow('DB_USER'),
   password: configService.getOrThrow('DB_PASSWORD'),
@@ -32,6 +21,4 @@ const MikroOrmConfig: MikroOrmModuleSyncOptions = {
   discovery: {
     requireEntitiesArray: true,
   },
-};
-
-export default MikroOrmConfig;
+});

@@ -9,9 +9,7 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { SurveysService } from './surveys.service';
-import { CreateSurveyDto } from './dto/create-survey.dto';
-import { UpdateSurveyDto } from './dto/update-survey.dto';
-import { CreateQuestionDto } from './dto/create-question.dto';
+import { CreateSurveyDto, UpdateSurveyDto, CreateQuestionDto } from './dto';
 import { QuestionContentValidationPipe } from './surveys.validators';
 
 @Controller('surveys')

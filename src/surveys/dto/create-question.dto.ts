@@ -1,7 +1,5 @@
 import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
-import {
-  QuestionContent,
-} from '../entities/question-types';
+import { QuestionContent } from '../entities';
 
 export class CreateQuestionDto {
   @IsNotEmpty()
