@@ -30,7 +30,7 @@ export class Question {
   name: string;
 
   @ManyToOne()
-  survey: Survey;
+  readonly survey: Survey;
 
   @Embedded(() => [
     QuestionStringContent,

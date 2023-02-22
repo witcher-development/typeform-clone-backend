@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { isString } from 'lodash';
 
-import { CreateQuestionDto } from './dto';
+import { CreateQuestionDto, UpdateQuestionDto } from './dto';
 import {
   QuestionContent,
   QuestionMultiSelectContent,
@@ -35,10 +35,10 @@ const isQuestionContent = (value): value is QuestionContent => {
 
   switch (value.type) {
     case QuestionTypes.String: {
-      return true;
+      return Object.hasOwn(value, 'type') && Object.keys(value).length === 1;
     }
     case QuestionTypes.Number: {
-      return true;
+      return Object.hasOwn(value, 'type') && Object.keys(value).length === 1;
     }
     case QuestionTypes.MultiSelect: {
       return isMultiSelectContent(value);
@@ -52,7 +52,7 @@ const isQuestionContent = (value): value is QuestionContent => {
 @Injectable()
 export class QuestionContentValidationPipe implements PipeTransform<any> {
   async transform(value: any, { metatype }: ArgumentMetadata) {
-    if (metatype !== CreateQuestionDto) {
+    if (metatype !== CreateQuestionDto && metatype !== UpdateQuestionDto) {
       return value;
     }
 
@@ -65,3 +65,57 @@ export class QuestionContentValidationPipe implements PipeTransform<any> {
     return value;
   }
 }
+
+/**
+ * It's okay if:
+ *  - IDs missing in 'changed', because they were deleted.
+ *  - There are changed options without ID, because they are newly created and didn't get an ID assigned yet.
+ *  - Existing question content is not of type 'multi-select', because question type was changed.
+ * It's NOT okay if:
+ *  - There are extra IDs in 'changed', because all IDs are generated on server.
+ *
+ * @returns item an unexpected item if finds.
+ */
+const checkUnexpectedMultiSelectOptionIds = (
+  existingContent: QuestionContent,
+  changedContent: QuestionMultiSelectContent,
+) => {
+  const existingIds = (
+    existingContent.type === QuestionTypes.MultiSelect
+      ? existingContent.options
+      : []
+  ).map(({ id }) => id);
+  const changedIds = changedContent.options
+    .map(({ id }) => id)
+    .filter((id) => !!id);
+
+  return changedIds.find((id) => !existingIds.includes(id));
+};
+export const validateIfAnyQuestionContentConflicts = (
+  existingQuestion: QuestionContent,
+  changedQuestion: QuestionContent,
+) => {
+  switch (changedQuestion.type) {
+    case QuestionTypes.String: {
+      return true;
+    }
+    case QuestionTypes.Number: {
+      return true;
+    }
+    case QuestionTypes.MultiSelect: {
+      const unexpectedOptions = checkUnexpectedMultiSelectOptionIds(
+        existingQuestion,
+        changedQuestion,
+      );
+      if (unexpectedOptions) {
+        throw new BadRequestException(
+          'Multi-select question content is corrupted',
+        );
+      }
+      return false;
+    }
+    default: {
+      return false;
+    }
+  }
+};

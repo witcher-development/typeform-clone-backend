@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
 
 import { Survey } from '@surveys/entities';
 import { CreateQuestionDto, UpdateQuestionDto } from './dto';
-import { Question } from './entities';
+import { buildQuestionContent, Question } from './entities';
+import { validateIfAnyQuestionContentConflicts } from './questions.validators';
 
 @Injectable()
 export class QuestionsService {
@@ -16,7 +17,7 @@ export class QuestionsService {
   ) {}
 
   async create(surveyId: string, { name, content }: CreateQuestionDto) {
-    const survey = await this.surveyRepository.findOne({ id: surveyId });
+    const survey = await this.surveyRepository.findOneOrFail({ id: surveyId });
     const newQuestion = new Question({ name, content }, survey);
     await this.questionRepository.persistAndFlush(newQuestion);
     return newQuestion;
@@ -26,15 +27,23 @@ export class QuestionsService {
     return this.questionRepository.find({ survey: { id: surveyId } });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} question`;
+  findOne(id: string) {
+    return this.questionRepository.findOneOrFail({ id }).catch((e) => {
+      throw new BadRequestException(e.message);
+    });
   }
 
-  update(id: number, updateQuestionDto: UpdateQuestionDto) {
-    return `This action updates a #${id} question`;
+  async update(id: string, { name, content }: UpdateQuestionDto) {
+    const question = await this.findOne(id);
+    validateIfAnyQuestionContentConflicts(question.content, content);
+    question.name = name;
+    question.content = buildQuestionContent(content);
+    await this.questionRepository.persistAndFlush(question);
+    return question;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} question`;
+  async remove(id: string) {
+    const question = await this.findOne(id);
+    return this.questionRepository.removeAndFlush(question);
   }
 }
