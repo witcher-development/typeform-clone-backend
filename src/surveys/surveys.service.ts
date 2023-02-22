@@ -47,7 +47,8 @@ export class SurveysService {
     return survey;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} survey`;
+  async remove(id: string) {
+    const survey = await this.findOne(id);
+    return this.surveyRepository.removeAndFlush(survey);
   }
 }

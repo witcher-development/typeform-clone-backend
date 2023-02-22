@@ -52,6 +52,6 @@ export class SurveysController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.surveysService.remove(+id);
+    return this.surveysService.remove(id);
   }
 }
