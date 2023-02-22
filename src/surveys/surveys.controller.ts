@@ -6,13 +6,11 @@ import {
   Patch,
   Param,
   Delete,
-  UsePipes,
 } from '@nestjs/common';
 import { SurveysService } from './surveys.service';
-import { CreateSurveyDto, UpdateSurveyDto, CreateQuestionDto } from './dto';
-import { QuestionContentValidationPipe } from './surveys.validators';
+import { CreateSurveyDto, UpdateSurveyDto } from './dto';
 
-@Controller('surveys')
+@Controller()
 export class SurveysController {
   constructor(private readonly surveysService: SurveysService) {}
 
@@ -21,23 +19,9 @@ export class SurveysController {
     return this.surveysService.create(createSurveyDto);
   }
 
-  @Post('questions')
-  @UsePipes(new QuestionContentValidationPipe())
-  createQuestion(
-    @Param('id') surveyId: string,
-    @Body() createQuestionDto: CreateQuestionDto,
-  ) {
-    return this.surveysService.createQuestion(createQuestionDto);
-  }
-
   @Get()
   findAll() {
     return this.surveysService.findAll();
-  }
-
-  @Get('/questions')
-  findAllQuestions() {
-    return this.surveysService.findAllQuestions();
   }
 
   @Get(':id')

@@ -1,10 +1,10 @@
+import { Survey } from '@surveys/entities';
 import {
-  Survey,
   Question,
   QuestionStringContent,
   QuestionNumberContent,
   QuestionMultiSelectContent,
-} from '@surveys/entities';
+} from '@questions/entities';
 
 export const allEntities = [
   Survey,

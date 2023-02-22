@@ -8,7 +8,7 @@ import {
 } from '@mikro-orm/core';
 
 import { CreateSurveyDto } from '../dto';
-import { Question } from './question.entity';
+import { Question } from '@questions/entities';
 
 @Entity()
 export class Survey {

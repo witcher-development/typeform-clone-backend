@@ -7,8 +7,8 @@ import {
   Embedded,
 } from '@mikro-orm/core';
 
+import { Survey } from '@surveys/entities';
 import { CreateQuestionDto } from '../dto';
-import { Survey } from './survey.entity';
 import {
   QuestionStringContent,
   QuestionNumberContent,

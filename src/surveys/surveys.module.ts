@@ -3,10 +3,10 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 
 import { SurveysService } from './surveys.service';
 import { SurveysController } from './surveys.controller';
-import { Survey, Question } from './entities';
+import { Survey } from './entities';
 
 @Module({
-  imports: [MikroOrmModule.forFeature([Survey, Question])],
+  imports: [MikroOrmModule.forFeature([Survey])],
   controllers: [SurveysController],
   providers: [SurveysService],
 })
