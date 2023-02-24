@@ -18,7 +18,8 @@ export class QuestionsService {
 
   async create(surveyId: string, { name, content }: CreateQuestionDto) {
     const survey = await this.surveyRepository.findOneOrFail({ id: surveyId });
-    const newQuestion = new Question({ name, content }, survey);
+    const newQuestion = new Question({ name }, survey);
+    newQuestion.content = buildQuestionContent(content);
     await this.questionRepository.persistAndFlush(newQuestion);
     return newQuestion;
   }

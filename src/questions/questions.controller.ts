@@ -18,10 +18,11 @@ export class QuestionsController {
 
   @Post()
   @UsePipes(new QuestionContentValidationPipe())
-  create(
+  async create(
     @Param('surveyId') surveyId: string,
     @Body() createQuestionDto: CreateQuestionDto,
   ) {
+    // await new Promise((res) => setTimeout(res, 5000));
     return this.questionsService.create(surveyId, createQuestionDto);
   }
 

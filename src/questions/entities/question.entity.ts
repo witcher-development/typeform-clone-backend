@@ -17,9 +17,8 @@ import {
 
 @Entity()
 export class Question {
-  constructor({ name, content }: Partial<CreateQuestionDto>, survey: Survey) {
+  constructor({ name }: Partial<CreateQuestionDto>, survey: Survey) {
     this.name = name;
-    this.content = content;
     this.survey = survey;
   }
 
