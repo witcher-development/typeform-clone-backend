@@ -1,3 +1,4 @@
+import * as uuid from 'uuid';
 import {
   ArgumentMetadata,
   BadRequestException,
@@ -22,7 +23,12 @@ export const isMultiSelectContent = (
 
   if (value.options.length) {
     return value.options.every(
-      (element) => Object.hasOwn(element, 'name') && isString(element.name),
+      (element) =>
+        Object.hasOwn(element, 'name') &&
+        isString(element.name) &&
+        Object.hasOwn(element, 'id') &&
+        uuid.validate(element.id) &&
+        uuid.version(element.id) === 4,
     );
   }
   return true;
@@ -65,57 +71,3 @@ export class QuestionContentValidationPipe implements PipeTransform<any> {
     return value;
   }
 }
-
-/**
- * It's okay if:
- *  - IDs missing in 'changed', because they were deleted.
- *  - There are changed options without ID, because they are newly created and didn't get an ID assigned yet.
- *  - Existing question content is not of type 'multi-select', because question type was changed.
- * It's NOT okay if:
- *  - There are extra IDs in 'changed', because all IDs are generated on server.
- *
- * @returns item an unexpected item if finds.
- */
-const checkUnexpectedMultiSelectOptionIds = (
-  existingContent: QuestionContent,
-  changedContent: QuestionMultiSelectContent,
-) => {
-  const existingIds = (
-    existingContent.type === QuestionTypes.MultiSelect
-      ? existingContent.options
-      : []
-  ).map(({ id }) => id);
-  const changedIds = changedContent.options
-    .map(({ id }) => id)
-    .filter((id) => !!id);
-
-  return changedIds.find((id) => !existingIds.includes(id));
-};
-export const validateIfAnyQuestionContentConflicts = (
-  existingQuestion: QuestionContent,
-  changedQuestion: QuestionContent,
-) => {
-  switch (changedQuestion.type) {
-    case QuestionTypes.String: {
-      return true;
-    }
-    case QuestionTypes.Number: {
-      return true;
-    }
-    case QuestionTypes.MultiSelect: {
-      const unexpectedOptions = checkUnexpectedMultiSelectOptionIds(
-        existingQuestion,
-        changedQuestion,
-      );
-      if (unexpectedOptions) {
-        throw new BadRequestException(
-          'Multi-select question content is corrupted',
-        );
-      }
-      return false;
-    }
-    default: {
-      return false;
-    }
-  }
-};

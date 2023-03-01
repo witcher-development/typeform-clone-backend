@@ -18,7 +18,7 @@ export class QuestionsController {
 
   @Post()
   @UsePipes(new QuestionContentValidationPipe())
-  async create(
+  create(
     @Param('surveyId') surveyId: string,
     @Body() createQuestionDto: CreateQuestionDto,
   ) {

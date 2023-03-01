@@ -1,11 +1,14 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
 
 import { Survey } from '@surveys/entities';
 import { CreateQuestionDto, UpdateQuestionDto } from './dto';
 import { buildQuestionContent, Question } from './entities';
-import { validateIfAnyQuestionContentConflicts } from './questions.validators';
 
 @Injectable()
 export class QuestionsService {
@@ -16,9 +19,13 @@ export class QuestionsService {
     private readonly surveyRepository: EntityRepository<Survey>,
   ) {}
 
-  async create(surveyId: string, { name, content }: CreateQuestionDto) {
+  async create(surveyId: string, { id, name, content }: CreateQuestionDto) {
+    const questionAlreadyExists = await this.questionRepository.findOne({ id });
+    if (questionAlreadyExists) {
+      throw new ConflictException();
+    }
     const survey = await this.surveyRepository.findOneOrFail({ id: surveyId });
-    const newQuestion = new Question({ name }, survey);
+    const newQuestion = new Question({ id, name }, survey);
     newQuestion.content = buildQuestionContent(content);
     await this.questionRepository.persistAndFlush(newQuestion);
     return newQuestion;
@@ -36,7 +43,6 @@ export class QuestionsService {
 
   async update(id: string, { name, content }: UpdateQuestionDto) {
     const question = await this.findOne(id);
-    validateIfAnyQuestionContentConflicts(question.content, content);
     question.name = name;
     question.content = buildQuestionContent(content);
     await this.questionRepository.persistAndFlush(question);

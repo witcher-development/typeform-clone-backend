@@ -1,4 +1,3 @@
-import * as uuid from 'uuid';
 import { Embeddable, Enum, Property } from '@mikro-orm/core';
 
 export enum QuestionTypes {
@@ -34,11 +33,11 @@ export class QuestionNumberContent extends QuestionContentAbstract {
 
 export class MultiSelectOption {
   public name: string;
-  public id?: string;
+  public id: string;
 
-  constructor(name: string, id?: string) {
+  constructor(name: string, id: string) {
     this.name = name;
-    this.id = id || uuid.v4();
+    this.id = id;
   }
 }
 @Embeddable({ discriminatorValue: QuestionTypes.MultiSelect })

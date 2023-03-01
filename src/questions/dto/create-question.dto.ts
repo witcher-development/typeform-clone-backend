@@ -1,10 +1,8 @@
-import { IsNotEmpty, IsString } from 'class-validator';
-import { QuestionContent } from '../entities';
+import { IsUUID } from 'class-validator';
 
-export class CreateQuestionDto {
-  @IsString()
-  name: string;
+import { UpdateQuestionDto } from './update-question.dto';
 
-  @IsNotEmpty()
-  content: QuestionContent;
+export class CreateQuestionDto extends UpdateQuestionDto {
+  @IsUUID()
+  id: string;
 }

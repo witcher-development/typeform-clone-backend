@@ -1,4 +1,3 @@
-import * as uuid from 'uuid';
 import {
   Entity,
   PrimaryKey,
@@ -17,13 +16,14 @@ import {
 
 @Entity()
 export class Question {
-  constructor({ name }: Partial<CreateQuestionDto>, survey: Survey) {
+  constructor({ id, name }: Partial<CreateQuestionDto>, survey: Survey) {
+    this.id = id;
     this.name = name;
     this.survey = survey;
   }
 
   @PrimaryKey()
-  id: string = uuid.v4();
+  id: string;
 
   @Property()
   name: string;

@@ -1,3 +1,10 @@
-import { CreateQuestionDto } from './create-question.dto';
+import { IsNotEmpty, IsString } from 'class-validator';
+import { QuestionContent } from '@questions/entities';
 
-export class UpdateQuestionDto extends CreateQuestionDto {}
+export class UpdateQuestionDto {
+  @IsString()
+  name: string;
+
+  @IsNotEmpty()
+  content: QuestionContent;
+}
