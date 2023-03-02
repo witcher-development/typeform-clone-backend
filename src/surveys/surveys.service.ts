@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  NotFoundException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
 import { wrap } from '@mikro-orm/core';
 import { EntityRepository } from '@mikro-orm/postgresql';
 import { InjectRepository } from '@mikro-orm/nestjs';
@@ -13,8 +17,12 @@ export class SurveysService {
     private readonly surveyRepository: EntityRepository<Survey>,
   ) {}
 
-  async create(createSurveyDto: CreateSurveyDto) {
-    const newSurvey = new Survey(createSurveyDto);
+  async create({ id, name }: CreateSurveyDto) {
+    const surveyAlreadyExists = await this.surveyRepository.findOne({ id });
+    if (surveyAlreadyExists) {
+      throw new ConflictException();
+    }
+    const newSurvey = new Survey({ id, name });
     await this.surveyRepository.persistAndFlush(newSurvey);
     return newSurvey;
   }
@@ -24,7 +32,9 @@ export class SurveysService {
   }
 
   findOne(id: string) {
-    return this.surveyRepository.findOne({ id });
+    return this.surveyRepository.findOneOrFail({ id }).catch((e) => {
+      throw new NotFoundException(e.message);
+    });
   }
 
   async update(id: string, updateSurveyDto: UpdateSurveyDto) {
@@ -35,7 +45,9 @@ export class SurveysService {
   }
 
   async remove(id: string) {
-    const survey = await this.findOne(id);
+    const survey = await this.surveyRepository.findOneOrFail(id, {
+      populate: ['questions'],
+    });
     return this.surveyRepository.removeAndFlush(survey);
   }
 }

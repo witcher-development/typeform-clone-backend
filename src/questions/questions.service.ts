@@ -1,5 +1,5 @@
 import {
-  BadRequestException,
+  NotFoundException,
   ConflictException,
   Injectable,
 } from '@nestjs/common';
@@ -37,7 +37,7 @@ export class QuestionsService {
 
   findOne(id: string) {
     return this.questionRepository.findOneOrFail({ id }).catch((e) => {
-      throw new BadRequestException(e.message);
+      throw new NotFoundException(e.message);
     });
   }
 

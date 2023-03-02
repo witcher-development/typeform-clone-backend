@@ -1,3 +1,6 @@
-import { CreateSurveyDto } from './create-survey.dto';
+import { IsString } from 'class-validator';
 
-export class UpdateSurveyDto extends CreateSurveyDto {}
+export class UpdateSurveyDto {
+  @IsString()
+  name: string;
+}

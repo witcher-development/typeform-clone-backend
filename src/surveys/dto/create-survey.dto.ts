@@ -1,7 +1,8 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsUUID } from 'class-validator';
 
-export class CreateSurveyDto {
-  @IsNotEmpty()
-  @IsString()
-  name: string;
+import { UpdateSurveyDto } from './update-survey.dto';
+
+export class CreateSurveyDto extends UpdateSurveyDto {
+  @IsUUID(4)
+  id: string;
 }

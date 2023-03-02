@@ -1,10 +1,10 @@
-import * as uuid from 'uuid';
 import {
+  Cascade,
+  Collection,
   Entity,
+  OneToMany,
   PrimaryKey,
   Property,
-  OneToMany,
-  Collection,
 } from '@mikro-orm/core';
 
 import { CreateSurveyDto } from '../dto';
@@ -12,17 +12,20 @@ import { Question } from '@questions/entities';
 
 @Entity()
 export class Survey {
-  constructor({ name }: CreateSurveyDto) {
+  constructor({ id, name }: CreateSurveyDto) {
+    this.id = id;
     this.name = name;
   }
 
   @PrimaryKey()
-  id: string = uuid.v4();
+  id: string;
 
   @Property()
   name: string;
 
-  @OneToMany(() => Question, (question) => question.survey)
+  @OneToMany(() => Question, (question) => question.survey, {
+    cascade: [Cascade.REMOVE],
+  })
   questions = new Collection<Question>(this);
 
   @Property()
