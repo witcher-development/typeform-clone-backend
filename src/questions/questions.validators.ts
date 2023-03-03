@@ -5,7 +5,7 @@ import {
   Injectable,
   PipeTransform,
 } from '@nestjs/common';
-import { isString } from 'lodash';
+import isString from 'lodash/isString';
 
 import { CreateQuestionDto, UpdateQuestionDto } from './dto';
 import {
