@@ -6,6 +6,8 @@ import {
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
 
+import * as uuid from 'uuid';
+
 import { Survey } from '@surveys/entities';
 import { CreateQuestionDto, UpdateQuestionDto } from './dto';
 import { buildQuestionContent, Question } from './entities';
@@ -20,11 +22,20 @@ export class QuestionsService {
   ) {}
 
   async create(surveyId: string, { id, name, content }: CreateQuestionDto) {
+    const survey = await this.surveyRepository.findOneOrFail({ id: surveyId });
+
     const questionAlreadyExists = await this.questionRepository.findOne({ id });
     if (questionAlreadyExists) {
-      throw new ConflictException();
+      const newId = uuid.v4();
+      const newQuestion = new Question({ id: newId, name }, survey);
+      newQuestion.content = buildQuestionContent(content);
+      await this.questionRepository.persistAndFlush(newQuestion);
+      throw new ConflictException({
+        newId,
+        newQuestion,
+      });
     }
-    const survey = await this.surveyRepository.findOneOrFail({ id: surveyId });
+
     const newQuestion = new Question({ id, name }, survey);
     newQuestion.content = buildQuestionContent(content);
     await this.questionRepository.persistAndFlush(newQuestion);
